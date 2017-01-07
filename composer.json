@@ -1,16 +1,30 @@
 {
     "name": "eduardlleshi/omnipay-affirm",
-    "description": "Affirm driver for the Omnipay payment processing library",
     "type": "library",
-    "require": {
-        "omnipay/common": "2.0"
-    },
+    "description": "Affirm driver for the Omnipay payment processing library",
+    "keywords": [
+        "gateway",
+        "merchant",
+        "omnipay",
+        "pay",
+        "payment",
+        "affirm"
+    ],
+    "homepage": "https://eduardlleshi.com/omnipay-affirm",
     "license": "MIT",
     "authors": [
         {
-            "name": "eduardlleshi",
+            "name": "Eduard Lleshi",
             "email": "eduardlleshi@gmail.com"
         }
     ],
-    "minimum-stability": "dev"
+    "autoload": {
+        "psr-4": { "Omnipay\\Affirm\\" : "src/" }
+    },
+    "require": {
+        "omnipay/common": "~2.0"
+    },
+    "require-dev": {
+        "omnipay/tests": "~2.0"
+    }
 }

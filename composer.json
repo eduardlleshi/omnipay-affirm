@@ -1,0 +1,16 @@
+{
+    "name": "eduardlleshi/omnipay-affirm",
+    "description": "Affirm driver for the Omnipay payment processing library",
+    "type": "library",
+    "require": {
+        "omnipay/common": "2.0"
+    },
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "eduardlleshi",
+            "email": "eduardlleshi@gmail.com"
+        }
+    ],
+    "minimum-stability": "dev"
+}

@@ -26,7 +26,7 @@ class Gateway extends AbstractGateway
 			'publicKey'  => '',
 			'privateKey' => '',
 			'productKey' => '',
-			'test'       => false,
+			'testMode'   => false,
 		];
 	}
 
@@ -61,12 +61,9 @@ class Gateway extends AbstractGateway
 	}
 
 
-
-
-
-	public function create( array $parameters = [] )
+	public function authorize( array $parameters = [] )
 	{
-		return $this->createRequest( '\Omnipay\Affirm\Message\CreateRequest', $parameters );
+		return $this->createRequest( '\Omnipay\Affirm\Message\AuthorizeRequest', $parameters );
 	}
 
 	/**
@@ -76,11 +73,18 @@ class Gateway extends AbstractGateway
 	 *
 	 * @param array $parameters
 	 *
-	 * @return \Omnipay\Stripe\Message\CaptureRequest
+	 * @return \Omnipay\Affirm\Message\CaptureRequest
 	 */
 	public function capture( array $parameters = [] )
 	{
-		return $this->createRequest( '\Omnipay\Stripe\Message\CaptureRequest', $parameters );
+		return $this->createRequest( '\Omnipay\Affirm\Message\CaptureRequest', $parameters );
+	}
+
+
+
+	public function fetch( array $parameters = [] )
+	{
+		return $this->createRequest( '\Omnipay\Affirm\Message\FetchRequest', $parameters );
 	}
 
 	/**
@@ -141,29 +145,6 @@ class Gateway extends AbstractGateway
 	public function void( array $parameters = [] )
 	{
 		return $this->createRequest( '\Omnipay\Stripe\Message\VoidRequest', $parameters );
-	}
-
-	/**
-	 * @deprecated 2.3.3:3.0.0 duplicate of \Omnipay\Stripe\Gateway::fetchTransaction()
-	 * @see \Omnipay\Stripe\Gateway::fetchTransaction()
-	 *
-	 * @param array $parameters
-	 *
-	 * @return \Omnipay\Stripe\Message\FetchChargeRequest
-	 */
-	public function fetchCharge( array $parameters = [] )
-	{
-		return $this->createRequest( '\Omnipay\Stripe\Message\FetchChargeRequest', $parameters );
-	}
-
-	/**
-	 * @param array $parameters
-	 *
-	 * @return \Omnipay\Stripe\Message\FetchTransactionRequest
-	 */
-	public function fetchTransaction( array $parameters = [] )
-	{
-		return $this->createRequest( '\Omnipay\Stripe\Message\FetchTransactionRequest', $parameters );
 	}
 
 	/**

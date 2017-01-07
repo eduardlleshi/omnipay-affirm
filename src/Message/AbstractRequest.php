@@ -40,16 +40,57 @@ abstract class AbstractRequest extends \Omnipay\Common\Message\AbstractRequest
 	 * @var string URL
 	 */
 	const API_VERSION = 'v2';
-	public $liveEndpoint = 'api.affirm.com/api/';
-	public $testEndpoint = 'sandbox.affirm.com/api/';
+	public $liveEndpoint = 'https://api.affirm.com/api/';
+	public $testEndpoint = 'https://sandbox.affirm.com/api/';
 
 
 	public function getEndpoint()
 	{
 		$base = $this->getTestMode() ? $this->testEndpoint : $this->liveEndpoint;
 
-		return $base . '/' . self::API_VERSION;
+		return $base . self::API_VERSION;
 	}
+
+	public function getCheckoutToken()
+	{
+		return $this->getParameter( 'checkout_token' );
+	}
+
+	public function setCheckoutToken( $value )
+	{
+		return $this->setParameter( 'checkout_token', $value );
+	}
+
+	public function getPublicKey()
+	{
+		return $this->getParameter( 'public_key' );
+	}
+
+	public function setPublicKey( $value )
+	{
+		return $this->setParameter( 'public_key', $value );
+	}
+
+	public function getPrivateKey()
+	{
+		return $this->getParameter( 'privateKey' );
+	}
+
+	public function setPrivateKey( $value )
+	{
+		return $this->setParameter( 'privateKey', $value );
+	}
+
+	public function getProductKey()
+	{
+		return $this->getParameter( 'productKey' );
+	}
+
+	public function setProductKey( $value )
+	{
+		return $this->setParameter( 'productKey', $value );
+	}
+
 
 	/**
 	 * Get HTTP Method.
@@ -65,12 +106,6 @@ abstract class AbstractRequest extends \Omnipay\Common\Message\AbstractRequest
 
 	public function sendData( $data )
 	{
-		// Stripe only accepts TLS >= v1.2, so make sure Curl is told
-		$config                          = $this->httpClient->getConfig();
-		$curlOptions                     = $config->get( 'curl.options' );
-		$curlOptions[CURLOPT_SSLVERSION] = 6;
-		$config->set( 'curl.options', $curlOptions );
-		$this->httpClient->setConfig( $config );
 
 		// don't throw exceptions for 4xx errors
 		$this->httpClient->getEventDispatcher()->addListener(
@@ -82,76 +117,34 @@ abstract class AbstractRequest extends \Omnipay\Common\Message\AbstractRequest
 			}
 		);
 
-		$httpRequest  = $this->httpClient->createRequest(
+		$json_data = json_encode( $data );
+
+		$httpRequest = $this->httpClient->createRequest(
 			$this->getHttpMethod(),
 			$this->getEndpoint(),
 			NULL,
-			$data
+			$json_data
 		);
+
+		$httpRequest->getCurlOptions()->set( CURLOPT_SSLVERSION, 6 ); // CURL_SSLVERSION_TLSv1_2 for libcurl < 7.35
+		$httpRequest->getCurlOptions()->set( CURLOPT_USERPWD, $this->getPublicKey() . ':' . $this->getPrivateKey() );
+		$httpRequest->getCurlOptions()->set( CURLOPT_POSTFIELDS, $json_data );
+
+//		dd( $httpRequest->getCurlOptions() );
 		$httpResponse = $httpRequest
-			->setHeader( 'Authorization', 'Basic ' . base64_encode( $this->getApiKey() . ':' ) )
+			->setHeader( 'Content-Type', 'application/json' )
+			->setHeader( 'Content-Length', strlen( $json_data ) )
 			->send();
+		
+		$jsonToArrayResponse = !empty( $httpResponse->getBody( true ) ) ? $httpResponse->json() : [];
 
-		$this->response = new Response( $this, $httpResponse->json() );
-
-		if ( $httpResponse->hasHeader( 'Request-Id' ) ) {
-			$this->response->setRequestId( (string) $httpResponse->getHeader( 'Request-Id' ) );
-		}
-
-		return $this->response;
+		return $this->createResponse( $jsonToArrayResponse, $httpResponse->getStatusCode() );
 	}
 
-	/**
-	 * @return mixed
-	 */
-	public function getSource()
+
+	protected function createResponse( $data, $httpStatusCode )
 	{
-		return $this->getParameter( 'source' );
+		return $this->response = new Response( $this, $data, $httpStatusCode );
 	}
 
-	/**
-	 * @param $value
-	 *
-	 * @return AbstractRequest provides a fluent interface.
-	 */
-	public function setSource( $value )
-	{
-		return $this->setParameter( 'source', $value );
-	}
-
-
-	/**
-	 * Get the card data.
-	 *
-	 * Because the stripe gateway uses a common format for passing
-	 * card data to the API, this function can be called to get the
-	 * data from the associated card object in the format that the
-	 * API requires.
-	 *
-	 * @return array
-	 */
-	protected function getCardData()
-	{
-		$card = $this->getCard();
-		$card->validate();
-
-		$data              = [];
-		$data['object']    = 'card';
-		$data['number']    = $card->getNumber();
-		$data['exp_month'] = $card->getExpiryMonth();
-		$data['exp_year']  = $card->getExpiryYear();
-		if ( $card->getCvv() ) {
-			$data['cvc'] = $card->getCvv();
-		}
-		$data['name']            = $card->getName();
-		$data['address_line1']   = $card->getAddress1();
-		$data['address_line2']   = $card->getAddress2();
-		$data['address_city']    = $card->getCity();
-		$data['address_zip']     = $card->getPostcode();
-		$data['address_state']   = $card->getState();
-		$data['address_country'] = $card->getCountry();
-		$data['email']           = $card->getEmail();
-
-		return $data;
-	}
 }

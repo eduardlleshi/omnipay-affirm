@@ -1,23 +1,45 @@
 <?php
+
+/**
+ * Affirm Fetch Request
+ */
+
 namespace Omnipay\Affirm\Message;
 
 use Omnipay\Common\Message\AbstractResponse;
 
 /**
- * PayPal REST Authorize Response
+ * Affirm Fetch Response
+ * Prepares and outputs the data from FetchRequest
  */
 class FetchResponse extends AbstractResponse
 {
+	/**
+	 * Check if the transaction was successful.
+	 *
+	 * @return bool
+	 */
 	public function isSuccessful()
 	{
 		return empty( $this->data['error'] ) && $this->getCode() == 201 && $this->data['type'] != 'invalid_request';;
 	}
 
+
+	/**
+	 * Check if the transaction needs to redirect to another page
+	 *
+	 * @return bool
+	 */
 	public function isRedirect()
 	{
 		return $this->getRedirectUrl() !== NULL;
 	}
 
+	/**
+	 * Get the redirect URL
+	 *
+	 * @return string|null
+	 */
 	public function getRedirectUrl()
 	{
 		if ( isset( $this->data['links'] ) && is_array( $this->data['links'] ) ) {
@@ -31,6 +53,11 @@ class FetchResponse extends AbstractResponse
 		return NULL;
 	}
 
+	/**
+	 * Get all listd entries
+	 *
+	 * @return array
+	 */
 	public function getEntries()
 	{
 		if ( !isset( $this->data['entries'] ) ) {
@@ -42,6 +69,12 @@ class FetchResponse extends AbstractResponse
 		return $data;
 	}
 
+
+	/**
+	 * Get single (first) entry
+	 *
+	 * @return array|null
+	 */
 	public function getSingleEntry()
 	{
 		if ( isset( $this->getEntries()['entries'][0] ) )

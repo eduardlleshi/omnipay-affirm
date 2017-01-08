@@ -1,13 +1,50 @@
 <?php
+
+/**
+ * Affirm Refund Request
+ */
+
 namespace Omnipay\Affirm\Message;
 
+/**
+ * Class AuthorizeRequest
+ *
+ * @NOTE there are some issues with the refund producing "refund-exceeded" error on all calls.
+ *
+ * Makes a partial or full refund request.
+ *
+ * EXAMPLE
+ * <code>
+ * $gateway = Omnipay::create( 'Affirm' );
+ * $gateway->setPublicKey( 'AFFIRM_PUBLIC_KEY' );
+ * $gateway->setPrivateKey( 'AFFIRM_PRIVATE_KEY' );
+ * $gateway->setProductKey( 'AFFIRM_PRODUCT_KEY' );
+ * $gateway->setTestMode( 'AFFIRM_TEST' );
+ *
+ * $options            = [
+ *    'transactionReference' => $charge_id,
+ *    'amount'               => 10.00, //optional - the amount to be refunded, if this param is not sent a full refund will happen
+ * ];
+ *
+ * $response = $gateway->refund( $options )->send();
+ *
+ * if ( $response->isSuccessful() ) {
+ *     var_dump( 'success', $response->getData());
+ * } else {
+ *     var_dump( 'fail', $response->getMessage() );
+ * }
+ * </code>
+ *
+ * @see https://docs.affirm.com/Integrate_Affirm/Direct_API#Refund
+ * @see https://docs.affirm.com/Integrate_Affirm/Direct_API#charge_states
+ */
 class RefundRequest extends AbstractRequest
 {
-	public function getTransactionReference()
-	{
-		return $this->getParameter( 'transactionReference' );
-	}
-
+	/**
+	 * Prepare the data that the endpoint requests
+	 *
+	 * @return array
+	 */
 	public function getData()
 	{
 		$this->validate( 'transactionReference' );
@@ -20,11 +57,24 @@ class RefundRequest extends AbstractRequest
 		return $data;
 	}
 
+	/**
+	 * Get endpoint URI to make the request
+	 *
+	 * @return string
+	 */
 	public function getEndpoint()
 	{
 		return parent::getEndpoint() . '/charges/' . $this->getTransactionReference() . '/refund';
 	}
 
+	/**
+	 * Create the response object with the returned data.
+	 *
+	 * @param $data
+	 * @param $statusCode
+	 *
+	 * @return RefundResponse
+	 */
 	protected function createResponse( $data, $statusCode )
 	{
 		return $this->response = new RefundResponse( $this, $data, $statusCode );

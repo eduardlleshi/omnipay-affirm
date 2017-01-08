@@ -8,6 +8,37 @@ class FetchRequest extends AbstractRequest
 		return $this->getParameter( 'transactionReference' ) ? $this->getParameter( 'transactionReference' ) : NULL;
 	}
 
+	public function getLimit()
+	{
+		return $this->getParameter( 'limit' );
+	}
+
+	public function setLimit( $value )
+	{
+		return $this->setParameter( 'limit', $value );
+	}
+
+	public function getBefore()
+	{
+		return $this->getParameter( 'before' );
+	}
+
+	public function setBefore( $value )
+	{
+		return $this->setParameter( 'before', $value );
+	}
+
+	public function getAfter()
+	{
+		return $this->getParameter( 'after' );
+	}
+
+	public function setAfter( $value )
+	{
+		return $this->setParameter( 'after', $value );
+	}
+
+
 	public function getData()
 	{
 		$data = [];
@@ -33,8 +64,10 @@ class FetchRequest extends AbstractRequest
 		$httpRequest->getCurlOptions()->set( CURLOPT_RETURNTRANSFER, 1 );
 
 		try {
-			$httpResponse        = $httpRequest->setHeader( 'Content-Type', 'application/json' )->send();
-			$jsonToArrayResponse = !empty( $httpResponse->getBody() ) ? $httpResponse->json() : [];
+			$httpResponse = $httpRequest->setHeader( 'Content-Type', 'application/json' )->send();
+			dd( $this->getEndpoint(), $httpResponse->getBody( true ) );
+
+			$jsonToArrayResponse = !empty( $httpResponse->getBody( true ) ) ? $httpResponse->json() : [];
 		} catch ( \Exception $e ) {
 			d( $e->getMessage() );
 
@@ -51,7 +84,28 @@ class FetchRequest extends AbstractRequest
 
 	public function getEndpoint()
 	{
-		return parent::getEndpoint() . '/charges/' . $this->getTransactionReference();
+		return parent::getEndpoint() . '/charges/' . $this->getTransactionReference() . $this->getQueryString();
+	}
+
+	public function getQueryString()
+	{
+		$query_string = [];
+		if ( $this->getLimit() )
+			$query_string['limit'] = $this->getLimit();
+
+		if ( $this->getBefore() )
+			$query_string['before'] = $this->getBefore();
+
+		if ( $this->getAfter() )
+			$query_string['after'] = $this->getAfter();
+
+		if ( count( $query_string ) )
+			$query_string_builded = '?' . http_build_query( $query_string, '', '&amp;' );
+		else
+			$query_string_builded = NULL;
+
+
+		return $query_string_builded;
 	}
 
 	protected function createResponse( $data, $statusCode )

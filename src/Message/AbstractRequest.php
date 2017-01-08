@@ -6,8 +6,6 @@
 
 namespace Omnipay\Affirm\Message;
 
-use Omnipay\PayPal\Message\Response;
-
 /**
  * Affirm Abstract Request
  *
@@ -172,7 +170,7 @@ abstract class AbstractRequest extends \Omnipay\Common\Message\AbstractRequest
 	 *
 	 * @param mixed $data - parameters sent to Affirm endpoints
 	 *
-	 * @return Response
+	 * @return AuthorizeResponse
 	 */
 	public function sendData( $data )
 	{
@@ -210,10 +208,10 @@ abstract class AbstractRequest extends \Omnipay\Common\Message\AbstractRequest
 	 * @param $data
 	 * @param $httpStatusCode
 	 *
-	 * @return Response
+	 * @return AuthorizeResponse
 	 */
 	protected function createResponse( $data, $httpStatusCode )
 	{
-		return $this->response = new Response( $this, $data, $httpStatusCode );
+		return $this->response = new AuthorizeResponse( $this, $data, $httpStatusCode );
 	}
 }

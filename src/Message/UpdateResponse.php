@@ -21,7 +21,7 @@ class UpdateResponse extends AbstractResponse
 	 */
 	public function isSuccessful()
 	{
-		return empty( $this->data['error'] ) && $this->getCode() == 201 || ( $this->data['type'] == 'update' );
+		return empty( $this->data['message'] ) && $this->getCode() == 200 || ( $this->data['type'] == 'update' );
 	}
 
 	/**

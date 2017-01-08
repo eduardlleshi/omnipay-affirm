@@ -21,7 +21,7 @@ class AuthorizeResponse extends AbstractResponse
 	 */
 	public function isSuccessful()
 	{
-		return empty( $this->data['error'] ) && $this->getCode() == 201 && $this->data['type'] != 'invalid_request';
+		return empty( $this->data['message'] ) && $this->getCode() == 200 && $this->data['type'] != 'invalid_request' || ( isset( $this->data['status'] ) && $this->data['status'] == 'authorized' );
 	}
 
 	/**
@@ -59,7 +59,13 @@ class AuthorizeResponse extends AbstractResponse
 	 */
 	public function getTransactionReference()
 	{
-		return $this->data['charge_id'];
+		if ( $this->isSuccessful() ) {
+			$charge_id = isset( $this->data['id'] ) ? $this->data['id'] : NULL;
+		} else {
+			$charge_id = isset( $this->data['charge_id'] ) ? $this->data['charge_id'] : NULL;
+		}
+
+		return $charge_id;
 	}
 
 	/**

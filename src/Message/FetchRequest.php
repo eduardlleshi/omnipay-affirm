@@ -136,7 +136,7 @@ class FetchRequest extends AbstractRequest
 	 * Need to override the parent function since we are sending a GET request and removing the POST params
 	 * @param mixed $data
 	 *
-	 * @return FetchResponse|\Omnipay\PayPal\Message\Response
+	 * @return FetchResponse|\Omnipay\Affirm\Message\FetchResponse
 	 */
 	public function sendData( $data )
 	{

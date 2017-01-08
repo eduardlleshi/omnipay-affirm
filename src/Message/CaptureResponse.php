@@ -21,7 +21,7 @@ class CaptureResponse extends AbstractResponse
 	 */
 	public function isSuccessful()
 	{
-		return ( empty( $this->data['error'] ) && $this->getCode() == 201 && $this->data['type'] != 'invalid_request' ) || $this->data['code'] == 'duplicate-capture';
+		return ( empty( $this->data['message'] ) && $this->getCode() == 200 && $this->data['type'] != 'invalid_request' ) || ( isset( $this->data['type'] ) && $this->data['type'] == 'capture' );
 	}
 
 	/**

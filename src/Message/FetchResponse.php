@@ -21,7 +21,7 @@ class FetchResponse extends AbstractResponse
 	 */
 	public function isSuccessful()
 	{
-		return empty( $this->data['error'] ) && $this->getCode() == 201 && $this->data['type'] != 'invalid_request';;
+		return empty( $this->data['message'] );
 	}
 
 

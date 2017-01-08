@@ -3,14 +3,11 @@ namespace Omnipay\Affirm\Message;
 
 use Omnipay\Common\Message\AbstractResponse;
 
-/**
- * PayPal REST Authorize Response
- */
-class CaptureResponse extends AbstractResponse
+class RefundResponse extends AbstractResponse
 {
 	public function isSuccessful()
 	{
-		return ( empty( $this->data['error'] ) && $this->getCode() == 201 && $this->data['type'] != 'invalid_request' ) || $this->data['code'] == 'duplicate-capture';
+		return empty( $this->data['error'] ) && $this->getCode() == 201 && $this->data['type'] != 'invalid_request';;
 	}
 
 	public function isRedirect()
@@ -29,12 +26,6 @@ class CaptureResponse extends AbstractResponse
 		}
 
 		return NULL;
-	}
-
-
-	public function getTransactionId()
-	{
-		return $this->data['transaction_id'];
 	}
 
 	public function getMessage()

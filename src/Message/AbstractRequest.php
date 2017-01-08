@@ -61,6 +61,16 @@ abstract class AbstractRequest extends \Omnipay\Common\Message\AbstractRequest
 		return $this->setParameter( 'checkout_token', $value );
 	}
 
+	public function setOrderId( $value )
+	{
+		return $this->setParameter( 'order_id', $value );
+	}
+
+	public function getOrderId()
+	{
+		return $this->getParameter( 'order_id' );
+	}
+
 	public function getPublicKey()
 	{
 		return $this->getParameter( 'public_key' );
@@ -117,25 +127,18 @@ abstract class AbstractRequest extends \Omnipay\Common\Message\AbstractRequest
 			}
 		);
 
-		$json_data = json_encode( $data );
+		d($data);
+		if ( !empty( $data ) && count( $data ) )
+			$json_data = json_encode( $data );
+		else
+			$json_data = NULL;
 
-		$httpRequest = $this->httpClient->createRequest(
-			$this->getHttpMethod(),
-			$this->getEndpoint(),
-			NULL,
-			$json_data
-		);
-
+		$httpRequest = $this->httpClient->createRequest( $this->getHttpMethod(), $this->getEndpoint(), NULL, $json_data );
 		$httpRequest->getCurlOptions()->set( CURLOPT_SSLVERSION, 6 ); // CURL_SSLVERSION_TLSv1_2 for libcurl < 7.35
 		$httpRequest->getCurlOptions()->set( CURLOPT_USERPWD, $this->getPublicKey() . ':' . $this->getPrivateKey() );
 		$httpRequest->getCurlOptions()->set( CURLOPT_POSTFIELDS, $json_data );
 
-//		dd( $httpRequest->getCurlOptions() );
-		$httpResponse = $httpRequest
-			->setHeader( 'Content-Type', 'application/json' )
-			->setHeader( 'Content-Length', strlen( $json_data ) )
-			->send();
-		
+		$httpResponse        = $httpRequest->setHeader( 'Content-Type', 'application/json' )->setHeader( 'Content-Length', strlen( $json_data ) )->send();
 		$jsonToArrayResponse = !empty( $httpResponse->getBody( true ) ) ? $httpResponse->json() : [];
 
 		return $this->createResponse( $jsonToArrayResponse, $httpResponse->getStatusCode() );

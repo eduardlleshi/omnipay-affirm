@@ -10,7 +10,7 @@ class AuthorizeResponse extends AbstractResponse
 {
 	public function isSuccessful()
 	{
-		return empty( $this->data['error'] ) && $this->getCode() == 201;
+		return empty( $this->data['error'] ) && $this->getCode() == 201 && $this->data['type'] != 'invalid_request';
 	}
 
 	public function isRedirect()

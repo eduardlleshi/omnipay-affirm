@@ -6,11 +6,11 @@ use Omnipay\Common\Message\AbstractResponse;
 /**
  * PayPal REST Authorize Response
  */
-class CaptureResponse extends AbstractResponse
+class FetchResponse extends AbstractResponse
 {
 	public function isSuccessful()
 	{
-		return ( empty( $this->data['error'] ) && $this->getCode() == 201 && $this->data['type'] != 'invalid_request' ) || $this->data['code'] == 'duplicate-capture';
+		return empty( $this->data['error'] ) && $this->getCode() == 201 && $this->data['type'] != 'invalid_request';;
 	}
 
 	public function isRedirect()
@@ -31,14 +31,22 @@ class CaptureResponse extends AbstractResponse
 		return NULL;
 	}
 
-
-	public function getTransactionId()
+	public function getEntries()
 	{
-		return $this->data['transaction_id'];
+		if ( !isset( $this->data['entries'] ) ) {
+			$data['entries'][] = $this->data;
+		} else {
+			$data = $this->data;
+		}
+
+		return $data;
 	}
 
-	public function getMessage()
+	public function getSingleEntry()
 	{
-		return $this->data['message'];
+		if ( isset( $this->getEntries()['entries'][0] ) )
+			return $this->getEntries()['entries'][0];
+
+		return NULL;
 	}
 }

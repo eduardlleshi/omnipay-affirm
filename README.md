@@ -2,12 +2,8 @@
 
 **Affirm driver for the Omnipay PHP payment processing library**
 
-[![Build Status](https://travis-ci.org/thephpleague/omnipay-stripe.png?branch=master)](https://travis-ci.org/thephpleague/omnipay-stripe)
-[![Latest Stable Version](https://poser.pugx.org/omnipay/stripe/version.png)](https://packagist.org/packages/omnipay/stripe)
-[![Total Downloads](https://poser.pugx.org/omnipay/stripe/d/total.png)](https://packagist.org/packages/omnipay/stripe)
-
 [Omnipay](https://github.com/thephpleague/omnipay) is a framework agnostic, multi-gateway payment
-processing library for PHP 5.3+. This package implements Stripe support for Omnipay.
+processing library for PHP 5.3+. This package implements Affirm support for Omnipay.
 
 ## Installation
 
@@ -31,7 +27,7 @@ And run composer to update your dependencies:
 
 The following gateways are provided by this package:
 
-* [Stripe](https://stripe.com/)
+* [Affirm](https://affirm.com/)
 
 For general usage instructions, please see the main [Omnipay](https://github.com/thephpleague/omnipay)
 repository.
@@ -48,7 +44,7 @@ After that you will have a `checkout_token` field which will be submitted to you
 Simply pass this through to the gateway as `checkout_token`, instead of the usual `checkout_token` array:
 
 ```php
-        $checkout_token = $_POST['stripeToken'];
+        $checkout_token = $_POST['checkout_token'];
 
         $response = $gateway->authorize(
             'checkout_token' => $checkout_token,

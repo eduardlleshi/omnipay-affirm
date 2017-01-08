@@ -54,6 +54,8 @@ Simply pass this through to the gateway as `checkout_token`, instead of the usua
 ## TODO
 Create unit testing for all Affirm endpoints
 
+Fix an issue with refunds
+
 ## Support
 
 If you are having general issues with Omnipay, we suggest posting on

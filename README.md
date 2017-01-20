@@ -35,13 +35,13 @@ repository.
 ### Affirm.js
 
 The Affirm integration is fairly straight forward. Essentially you just pass
-a `checkout_toke ` field through to Affirm instead of the regular payment data.
+a `checkout_token ` field through to Affirm instead of the regular payment data.
 
 Start by following the standard Affirm JS guide here to generate the :
 [https://docs.affirm.com/Integrate_Affirm/Direct_API#Initiate_checkout](https://docs.affirm.com/Integrate_Affirm/Direct_API#Initiate_checkout)
 
 After that you will have a `checkout_token` field which will be submitted to your server.
-Simply pass this through to the gateway as `checkout_token`, instead of the usual `checkout_token` array:
+Simply pass this through to the gateway as `checkout_token`, instead of the usual `options` array:
 
 ```php
         $checkout_token = $_POST['checkout_token'];
@@ -49,12 +49,15 @@ Simply pass this through to the gateway as `checkout_token`, instead of the usua
         $response = $gateway->authorize(
             'checkout_token' => $checkout_token,
         ])->send();
+        
+        $transaction_referencee = $response->getTransactionReference();
+        
+        // you may use $transaction_reference in the upcoming calls.
 ```
 
 ## TODO
-Create unit testing for all Affirm endpoints
-
-Fix an issue with refunds
+- Create unit testing for all Affirm endpoints
+- Fix an issue with refunds
 
 ## Support
 

@@ -6,6 +6,12 @@
 
 namespace Omnipay\Affirm;
 
+use Omnipay\Affirm\Message\AuthorizeRequest;
+use Omnipay\Affirm\Message\CaptureRequest;
+use Omnipay\Affirm\Message\FetchRequest;
+use Omnipay\Affirm\Message\RefundRequest;
+use Omnipay\Affirm\Message\UpdateRequest;
+use Omnipay\Affirm\Message\VoidRequest;
 use Omnipay\Common\AbstractGateway;
 
 //TODO: add sample code
@@ -115,7 +121,7 @@ class Gateway extends AbstractGateway
 	 *
 	 * @param array $parameters
 	 *
-	 * @return \Omnipay\Affirm\Message\AuthorizeRequest
+	 * @return AuthorizeRequest
 	 */
 	public function authorize( array $parameters = [] )
 	{
@@ -131,7 +137,7 @@ class Gateway extends AbstractGateway
 	 *
 	 * @param array $parameters
 	 *
-	 * @return \Omnipay\Affirm\Message\CaptureRequest
+	 * @return CaptureRequest
 	 */
 	public function capture( array $parameters = [] )
 	{
@@ -143,7 +149,7 @@ class Gateway extends AbstractGateway
 	 *
 	 * @param array $parameters
 	 *
-	 * @return \Omnipay\Affirm\Message\FetchRequest
+	 * @return FetchRequest
 	 */
 	public function fetch( array $parameters = [] )
 	{
@@ -158,7 +164,7 @@ class Gateway extends AbstractGateway
 	 *
 	 * @param array $parameters
 	 *
-	 * @return \Omnipay\Affirm\Message\VoidRequest
+	 * @return VoidRequest
 	 */
 	public function void( array $parameters = [] )
 	{
@@ -182,7 +188,7 @@ class Gateway extends AbstractGateway
 	 *
 	 * @param array $parameters
 	 *
-	 * @return \Omnipay\Affirm\Message\RefundRequest
+	 * @return RefundRequest
 	 */
 	public function refund( array $parameters = [] )
 	{
@@ -196,7 +202,7 @@ class Gateway extends AbstractGateway
 	 *
 	 * @param array $parameters
 	 *
-	 * @return \Omnipay\Affirm\Message\UpdateRequest
+	 * @return UpdateRequest
 	 */
 	public function update( array $parameters = [] )
 	{

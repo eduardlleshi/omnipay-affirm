@@ -6,12 +6,14 @@
 
 namespace Omnipay\Affirm\Message;
 
+use Exception;
+
 /**
  * Class Fetch Request
  *
  * Fetches a single or list of transactions.
  *
-* EXAMPLE
+ * EXAMPLE
  * <code>
  * $gateway = Omnipay::create( 'Affirm' );
  * $gateway->setPublicKey( 'AFFIRM_PUBLIC_KEY' );
@@ -136,7 +138,7 @@ class FetchRequest extends AbstractRequest
 	 * Need to override the parent function since we are sending a GET request and removing the POST params
 	 * @param mixed $data
 	 *
-	 * @return FetchResponse|\Omnipay\Affirm\Message\FetchResponse
+	 * @return FetchResponse|FetchResponse
 	 */
 	public function sendData( $data )
 	{
@@ -156,9 +158,9 @@ class FetchRequest extends AbstractRequest
 		$httpRequest->getCurlOptions()->set( CURLOPT_RETURNTRANSFER, 1 );
 
 		try {
-			$httpResponse = $httpRequest->setHeader( 'Content-Type', 'application/json' )->send();
+			$httpResponse        = $httpRequest->setHeader( 'Content-Type', 'application/json' )->send();
 			$jsonToArrayResponse = !empty( $httpResponse->getBody( true ) ) ? $httpResponse->json() : [];
-		} catch ( \Exception $e ) {
+		} catch ( Exception $e ) {
 			d( $e->getMessage() );
 
 			return $this->createResponse( [], $e->getCode() );

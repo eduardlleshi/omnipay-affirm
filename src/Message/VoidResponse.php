@@ -21,7 +21,7 @@ class VoidResponse extends AbstractResponse
 	 */
 	public function isSuccessful()
 	{
-		return empty( $this->data['error'] ) && $this->getCode() == 200 || ($this->data['type'] == 'void');
+		return empty( $this->data['error'] ) && $this->getCode() == 200 || ( $this->data['type'] == 'void' );
 	}
 
 	/**

@@ -97,7 +97,6 @@ class UpdateRequest extends AbstractRequest
 	}
 
 
-
 	/**
 	 * Prepare the data that the endpoint requests
 	 *

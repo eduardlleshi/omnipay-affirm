@@ -47,7 +47,7 @@ Simply pass this through to the gateway as `transaction_id`, instead of the usua
         $transaction_id = $_POST['checkout_token'];
 
         $response = $gateway->authorize(
-            'transaction_id' => $checkout_token,
+            'transaction_id' => $transaction_id,
         ])->send();
         
         $transaction_referencee = $response->getTransactionReference();

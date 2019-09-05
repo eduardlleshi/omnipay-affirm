@@ -16,9 +16,14 @@ namespace Omnipay\Affirm\Message;
 abstract class AbstractRequest extends \Omnipay\Common\Message\AbstractRequest
 {
 	/**
-	 * Define the current API version of Affirm
+	 * API V1 (Transaction API)
 	 */
-	const API_VERSION = 'v2';
+	const API_V1 = 'v1';
+
+	/**
+	 * API V2 (Direct API)
+	 */
+	const API_V2 = 'v2';
 	/**
 	 * Endpoint to make live/production calls
 	 * @var string
@@ -30,6 +35,11 @@ abstract class AbstractRequest extends \Omnipay\Common\Message\AbstractRequest
 	 */
 	public $testEndpoint = 'https://sandbox.affirm.com/api/';
 
+	/**
+	 * Set default version to be v2
+	 * @var string
+	 */
+	public $api_version = self::API_V2;
 
 	/**
 	 * Get endpoint to make calls
@@ -39,7 +49,18 @@ abstract class AbstractRequest extends \Omnipay\Common\Message\AbstractRequest
 	{
 		$base = $this->getTestMode() ? $this->testEndpoint : $this->liveEndpoint;
 
-		return $base . self::API_VERSION;
+		return $base . $this->api_version;
+	}
+
+	/**
+	 * Update the version on the fly
+	 * @return $this
+	 */
+	public function useV1()
+	{
+		$this->api_version = self::API_V1;
+
+		return $this;
 	}
 
 	/**
@@ -62,6 +83,28 @@ abstract class AbstractRequest extends \Omnipay\Common\Message\AbstractRequest
 	public function setCheckoutToken( $value )
 	{
 		return $this->setParameter( 'checkout_token', $value );
+	}
+
+	/**
+	 * Get transaction_id param
+	 *
+	 * @return mixed
+	 */
+	public function getTransactionId()
+	{
+		return $this->getParameter( 'transaction_id' );
+	}
+
+	/**
+	 * Set transaction_id param
+	 *
+	 * @param $value
+	 *
+	 * @return \Omnipay\Common\Message\AbstractRequest
+	 */
+	public function setTransactionId( $value )
+	{
+		return $this->setParameter( 'transaction_id', $value );
 	}
 
 	/**
@@ -174,7 +217,6 @@ abstract class AbstractRequest extends \Omnipay\Common\Message\AbstractRequest
 	 */
 	public function sendData( $data )
 	{
-
 		// don't throw exceptions for 4xx errors
 		$this->httpClient->getEventDispatcher()->addListener(
 			'request.error',

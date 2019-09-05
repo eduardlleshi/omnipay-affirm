@@ -21,7 +21,7 @@ namespace Omnipay\Affirm\Message;
  * $gateway->setTestMode( 'AFFIRM_TEST' );
  *
  * $options            = [
- *    'checkout_token' => $checkout_token,
+ *    'transaction_id' => $transaction_id,
  *    'order_id'       => $order_id //optional - sets an internal order_id to the charge
  * ];
  *
@@ -46,13 +46,14 @@ class AuthorizeRequest extends AbstractRequest
 	 */
 	public function getData()
 	{
-		$this->validate( 'checkout_token' );
+		$this->validate( 'transaction_id' );
 
 		$data = [];
 
-		$data['checkout_token'] = $this->getCheckoutToken();
-		if ( $this->getOrderId() )
+		$data['transaction_id'] = $this->getTransactionId();
+		if ( $this->getOrderId() ) {
 			$data['order_id'] = $this->getOrderId();
+		}
 
 		return $data;
 	}
@@ -64,7 +65,10 @@ class AuthorizeRequest extends AbstractRequest
 	 */
 	public function getEndpoint()
 	{
-		return parent::getEndpoint() . '/charges';
+		parent::useV1();
+		$base = parent::getEndpoint();
+
+		return $base . '/transactions';
 	}
 
 	/**

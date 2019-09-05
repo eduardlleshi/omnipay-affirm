@@ -115,7 +115,10 @@ class CaptureRequest extends AbstractRequest
 	 */
 	public function getEndpoint()
 	{
-		return parent::getEndpoint() . '/charges/' . $this->getTransactionReference() . '/capture';
+		parent::useV1();
+		$base = parent::getEndpoint();
+
+		return $base . '/transactions/' . $this->getTransactionReference() . '/capture';
 	}
 
 	/**

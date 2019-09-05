@@ -41,13 +41,13 @@ Start by following the standard Affirm JS guide here to generate the :
 [https://docs.affirm.com/Integrate_Affirm/Direct_API#Initiate_checkout](https://docs.affirm.com/Integrate_Affirm/Direct_API#Initiate_checkout)
 
 After that you will have a `checkout_token` field which will be submitted to your server.
-Simply pass this through to the gateway as `checkout_token`, instead of the usual `options` array:
+Simply pass this through to the gateway as `transaction_id`, instead of the usual `options` array:
 
 ```php
-        $checkout_token = $_POST['checkout_token'];
+        $transaction_id = $_POST['checkout_token'];
 
         $response = $gateway->authorize(
-            'checkout_token' => $checkout_token,
+            'transaction_id' => $checkout_token,
         ])->send();
         
         $transaction_referencee = $response->getTransactionReference();

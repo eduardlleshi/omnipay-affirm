@@ -108,6 +108,28 @@ abstract class AbstractRequest extends \Omnipay\Common\Message\AbstractRequest
 	}
 
 	/**
+	 * Get transaction_id param
+	 *
+	 * @return mixed
+	 */
+	public function getExpand()
+	{
+		return $this->getParameter( 'expand' );
+	}
+
+	/**
+	 * Set transaction_id param
+	 *
+	 * @param $value
+	 *
+	 * @return \Omnipay\Common\Message\AbstractRequest
+	 */
+	public function setExpand( $value )
+	{
+		return $this->setParameter( 'expand', $value );
+	}
+
+	/**
 	 * Get order_id param
 	 *
 	 * @return mixed

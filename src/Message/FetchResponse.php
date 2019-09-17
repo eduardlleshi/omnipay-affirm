@@ -21,7 +21,7 @@ class FetchResponse extends AbstractResponse
 	 */
 	public function isSuccessful()
 	{
-		return empty( $this->data['message'] );
+		return empty( $this->data['status'] );
 	}
 
 
@@ -42,14 +42,6 @@ class FetchResponse extends AbstractResponse
 	 */
 	public function getRedirectUrl()
 	{
-		if ( isset( $this->data['links'] ) && is_array( $this->data['links'] ) ) {
-			foreach ( $this->data['links'] as $key => $value ) {
-				if ( $value['rel'] == 'approval_url' ) {
-					return $value['href'];
-				}
-			}
-		}
-
 		return NULL;
 	}
 
@@ -58,28 +50,31 @@ class FetchResponse extends AbstractResponse
 	 *
 	 * @return array
 	 */
-	public function getEntries()
+	public function getCheckout()
 	{
-		if ( !isset( $this->data['entries'] ) ) {
-			$data['entries'][] = $this->data;
-		} else {
-			$data = $this->data;
-		}
-
-		return $data;
+		return $this->data['checkout'] ?? [];
 	}
 
-
 	/**
-	 * Get single (first) entry
+	 * Get all listd entries
 	 *
-	 * @return array|null
+	 * @return string|null
 	 */
-	public function getSingleEntry()
+	public function getProvider()
 	{
-		if ( isset( $this->getEntries()['entries'][0] ) )
-			return $this->getEntries()['entries'][0];
+		$provider = NULL;
+		if ( isset( $this->data['provider_id'] ) ) {
 
-		return NULL;
+			switch ( $this->data['provider_id'] ) {
+				case 1:
+					$provider = 'Affirm';
+					break;
+				case 2:
+					$provider = 'Zibby';
+					break;
+			}
+		}
+
+		return $provider;
 	}
 }

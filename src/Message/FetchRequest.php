@@ -23,9 +23,7 @@ use Exception;
  *
  * $options            = [
  *    'transactionReference' => $charge_id, //optional - if not filled all transactions will be listed
- *    'limit'                => 10, //optional - nr of results retrieved
- *    'before'               => $before_charge_id, //optional - show transactions that happened before this transaction
- *    'after'                => $afteR_charge_id //optional - show transactions that happened after this transactionw
+ *    'expand'               => 'checkout', //optional - nr of results retrieved
  * ];
  *
  * $response = $gateway->fetch( $options )->send();
@@ -44,82 +42,6 @@ use Exception;
  */
 class FetchRequest extends AbstractRequest
 {
-	/**
-	 * Get transactionReference (optional) parameter
-	 *
-	 * @return mixed|null
-	 */
-	public function getTransactionReference()
-	{
-		return $this->getParameter( 'transactionReference' ) ? $this->getParameter( 'transactionReference' ) : NULL;
-	}
-
-	/**
-	 * Get limit param
-	 *
-	 * @return mixed
-	 */
-	public function getLimit()
-	{
-		return $this->getParameter( 'limit' );
-	}
-
-	/**
-	 * Set limit param. Limits the retrieved transactions - can be used in combination with above/after to create a pagination
-	 *
-	 * @param $value
-	 *
-	 * @return \Omnipay\Common\Message\AbstractRequest
-	 */
-	public function setLimit( $value )
-	{
-		return $this->setParameter( 'limit', $value );
-	}
-
-	/**
-	 * Get before param (needs to be an existing charge_id) Filters transactions that happened before a specific charge.
-	 *
-	 * @return mixed
-	 */
-	public function getBefore()
-	{
-		return $this->getParameter( 'before' );
-	}
-
-	/**
-	 * Set before parameter.
-	 *
-	 * @param $value
-	 *
-	 * @return \Omnipay\Common\Message\AbstractRequest
-	 */
-	public function setBefore( $value )
-	{
-		return $this->setParameter( 'before', $value );
-	}
-
-	/**
-	 * Get after param (needs to be an existing charge_id) Filters transactions that happened after a specific charge.
-	 *
-	 * @return mixed
-	 */
-	public function getAfter()
-	{
-		return $this->getParameter( 'after' );
-	}
-
-	/**
-	 * Set after parameter.
-	 *
-	 * @param $value
-	 *
-	 * @return \Omnipay\Common\Message\AbstractRequest
-	 */
-	public function setAfter( $value )
-	{
-		return $this->setParameter( 'after', $value );
-	}
-
 
 	/**
 	 * Prepare the data that the endpoint requests
@@ -161,7 +83,6 @@ class FetchRequest extends AbstractRequest
 			$httpResponse        = $httpRequest->setHeader( 'Content-Type', 'application/json' )->send();
 			$jsonToArrayResponse = !empty( $httpResponse->getBody( true ) ) ? $httpResponse->json() : [];
 		} catch ( Exception $e ) {
-			d( $e->getMessage() );
 
 			return $this->createResponse( [], $e->getCode() );
 		}
@@ -186,33 +107,15 @@ class FetchRequest extends AbstractRequest
 	 */
 	public function getEndpoint()
 	{
-		return parent::getEndpoint() . '/charges/' . $this->getTransactionReference() . $this->getQueryString();
-	}
+		parent::useV1();
+		$base = parent::getEndpoint();
 
-	/**
-	 * Build query string used to filter the transaction list
-	 *
-	 * @return null|string
-	 */
-	public function getQueryString()
-	{
-		$query_string = [];
-		if ( $this->getLimit() )
-			$query_string['limit'] = $this->getLimit();
+		$query_string = NULL;
+		if ( $this->getExpand() ) {
+			$query_string = '?expand=' . $this->getExpand();
+		}
 
-		if ( $this->getBefore() )
-			$query_string['before'] = $this->getBefore();
-
-		if ( $this->getAfter() )
-			$query_string['after'] = $this->getAfter();
-
-		if ( count( $query_string ) )
-			$query_string_builded = '?' . http_build_query( $query_string, '', '&amp;' );
-		else
-			$query_string_builded = NULL;
-
-
-		return $query_string_builded;
+		return $base . '/transactions/' . $this->getTransactionReference() . $query_string;
 	}
 
 	/**

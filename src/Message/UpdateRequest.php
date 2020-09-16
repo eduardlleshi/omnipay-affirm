@@ -6,6 +6,8 @@
 
 namespace Omnipay\Affirm\Message;
 
+use Omnipay\Common\Exception\InvalidRequestException;
+
 /**
  * Affirm update Request
  * Updates the shipping information of an order.
@@ -101,6 +103,7 @@ class UpdateRequest extends AbstractRequest
 	 * Prepare the data that the endpoint requests
 	 *
 	 * @return array
+	 * @throws InvalidRequestException
 	 */
 	public function getData()
 	{
@@ -157,12 +160,11 @@ class UpdateRequest extends AbstractRequest
 	 * Create the response object with the returned data.
 	 *
 	 * @param $data
-	 * @param $statusCode
 	 *
 	 * @return UpdateResponse
 	 */
-	protected function createResponse( $data, $statusCode )
+	protected function createResponse( $data )
 	{
-		return $this->response = new UpdateResponse( $this, $data, $statusCode );
+		return $this->response = new UpdateResponse( $this, $data );
 	}
 }

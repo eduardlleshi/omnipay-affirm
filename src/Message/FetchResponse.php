@@ -56,7 +56,7 @@ class FetchResponse extends AbstractResponse
 	}
 
 	/**
-	 * Get all listd entries
+	 * Get provider
 	 *
 	 * @return string|null
 	 */
@@ -72,6 +72,9 @@ class FetchResponse extends AbstractResponse
 				case 2:
 					$provider = 'Zibby';
 					break;
+
+				default:
+					$provider = NULL;
 			}
 		}
 

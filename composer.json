@@ -22,10 +22,12 @@
         "psr-4": { "Omnipay\\Affirm\\" : "src/" }
     },
     "require": {
-        "omnipay/common": "~2.0"
+        "omnipay/common": "^3"
     },
     "require-dev": {
-        "omnipay/tests": "~2.0"
+        "omnipay/tests": "^3",
+        "squizlabs/php_codesniffer": "^3",
+        "phpro/grumphp": "^0.14"
     },
     "minimum-stability": "dev"
 }

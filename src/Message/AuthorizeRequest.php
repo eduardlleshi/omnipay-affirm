@@ -6,6 +6,8 @@
 
 namespace Omnipay\Affirm\Message;
 
+use Omnipay\Common\Exception\InvalidRequestException;
+
 /**
  * Affirm Authorize Request
  *
@@ -43,6 +45,7 @@ class AuthorizeRequest extends AbstractRequest
 	 * Prepare the data that the endpoint requests
 	 *
 	 * @return array
+	 * @throws InvalidRequestException
 	 */
 	public function getData()
 	{
@@ -75,12 +78,11 @@ class AuthorizeRequest extends AbstractRequest
 	 * Create the response object with the returned data.
 	 *
 	 * @param $data
-	 * @param $statusCode
 	 *
 	 * @return AuthorizeResponse
 	 */
-	protected function createResponse( $data, $statusCode )
+	protected function createResponse( $data )
 	{
-		return $this->response = new AuthorizeResponse( $this, $data, $statusCode );
+		return $this->response = new AuthorizeResponse( $this, $data );
 	}
 }

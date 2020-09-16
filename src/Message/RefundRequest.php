@@ -6,6 +6,8 @@
 
 namespace Omnipay\Affirm\Message;
 
+use Omnipay\Common\Exception\InvalidRequestException;
+
 /**
  * Class AuthorizeRequest
  *
@@ -23,7 +25,7 @@ namespace Omnipay\Affirm\Message;
  *
  * $options            = [
  *    'transactionReference' => $charge_id,
- *    'amount'               => 10.00, //optional - the amount to be refunded, if this param is not sent a full refund will happen
+ *    'amount'               => 10, // optional - the amount (in cents) to be refunded, if this param is not sent a full refund will happen.
  * ];
  *
  * $response = $gateway->refund( $options )->send();
@@ -44,12 +46,13 @@ class RefundRequest extends AbstractRequest
 	 * Prepare the data that the endpoint requests
 	 *
 	 * @return array
+	 * @throws InvalidRequestException
 	 */
 	public function getData()
 	{
 		$this->validate( 'transactionReference' );
 		if ( $this->getAmount() ) {
-			$data['amount'] = number_format( $this->getAmount(), 2 );
+			$data['amount'] = (int) $this->getAmount();
 		} else {
 			$data = [];
 		}
@@ -71,12 +74,11 @@ class RefundRequest extends AbstractRequest
 	 * Create the response object with the returned data.
 	 *
 	 * @param $data
-	 * @param $statusCode
 	 *
 	 * @return RefundResponse
 	 */
-	protected function createResponse( $data, $statusCode )
+	protected function createResponse( $data )
 	{
-		return $this->response = new RefundResponse( $this, $data, $statusCode );
+		return $this->response = new RefundResponse( $this, $data );
 	}
 }

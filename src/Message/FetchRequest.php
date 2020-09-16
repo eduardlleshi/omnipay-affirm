@@ -50,44 +50,7 @@ class FetchRequest extends AbstractRequest
 	 */
 	public function getData()
 	{
-		$data = [];
-
-		return $data;
-	}
-
-	/**
-	 * Make the HTTP request to Affirm endpoints
-	 * Need to override the parent function since we are sending a GET request and removing the POST params
-	 * @param mixed $data
-	 *
-	 * @return FetchResponse|FetchResponse
-	 */
-	public function sendData( $data )
-	{
-		// don't throw exceptions for 4xx errors
-		$this->httpClient->getEventDispatcher()->addListener(
-			'request.error',
-			function ( $event ) {
-				if ( $event['response']->isClientError() ) {
-					$event->stopPropagation();
-				}
-			}
-		);
-
-		$httpRequest = $this->httpClient->createRequest( $this->getHttpMethod(), $this->getEndpoint(), NULL, NULL );
-		$httpRequest->getCurlOptions()->set( CURLOPT_SSLVERSION, 6 ); // CURL_SSLVERSION_TLSv1_2 for libcurl < 7.35
-		$httpRequest->getCurlOptions()->set( CURLOPT_USERPWD, $this->getPublicKey() . ':' . $this->getPrivateKey() );
-		$httpRequest->getCurlOptions()->set( CURLOPT_RETURNTRANSFER, 1 );
-
-		try {
-			$httpResponse        = $httpRequest->setHeader( 'Content-Type', 'application/json' )->send();
-			$jsonToArrayResponse = !empty( $httpResponse->getBody( true ) ) ? $httpResponse->json() : [];
-		} catch ( Exception $e ) {
-
-			return $this->createResponse( [], $e->getCode() );
-		}
-
-		return $this->createResponse( $jsonToArrayResponse, $httpResponse->getStatusCode() );
+		return [];
 	}
 
 	/**
@@ -122,12 +85,11 @@ class FetchRequest extends AbstractRequest
 	 * Create the response object with the returned data.
 	 *
 	 * @param $data
-	 * @param $statusCode
 	 *
 	 * @return FetchResponse
 	 */
-	protected function createResponse( $data, $statusCode )
+	protected function createResponse( $data )
 	{
-		return $this->response = new FetchResponse( $this, $data, $statusCode );
+		return $this->response = new FetchResponse( $this, $data );
 	}
 }

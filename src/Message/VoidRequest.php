@@ -6,6 +6,8 @@
 
 namespace Omnipay\Affirm\Message;
 
+use Omnipay\Common\Exception\InvalidRequestException;
+
 /**
  * Affirm Void Request
  *
@@ -42,13 +44,12 @@ class VoidRequest extends AbstractRequest
 	 * Prepare the data that the endpoint requests
 	 *
 	 * @return array
+	 * @throws InvalidRequestException
 	 */
 	public function getData()
 	{
 		$this->validate( 'transactionReference' );
-		$data = [];
-
-		return $data;
+		return [];
 	}
 
 	/**
@@ -65,12 +66,11 @@ class VoidRequest extends AbstractRequest
 	 * Generate the Response class with the returning data from sendData
 	 *
 	 * @param $data
-	 * @param $statusCode
 	 *
 	 * @return VoidResponse
 	 */
-	protected function createResponse( $data, $statusCode )
+	protected function createResponse( $data )
 	{
-		return $this->response = new VoidResponse( $this, $data, $statusCode );
+		return $this->response = new VoidResponse( $this, $data );
 	}
 }

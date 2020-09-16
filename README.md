@@ -1,38 +1,37 @@
 # Omnipay: Affirm
 
-**Affirm driver for the Omnipay PHP payment processing library**
+**Affirm gateway for the Omnipay PHP payment processing library**
 
 [Omnipay](https://github.com/thephpleague/omnipay) is a framework agnostic, multi-gateway payment
 processing library for PHP 5.3+. This package implements Affirm support for Omnipay.
 
-## Installation
+## Install
 
-Omnipay & Affirm driver are installed via [Composer](http://getcomposer.org/). To install, simply add it
-to your `composer.json` file:
+##### For Omnipay v3:
 
-```json
-{
-    "require": {
-        "eduardlleshi/omnipay-affirm": "~2.0"
-    }
-}
+Instal the gateway using require. Require the `league/omnipay` base package and this gateway.
+
+``` bash
+$ composer require league/omnipay eduardlleshi/omnipay-affirm
 ```
 
-And run composer to update your dependencies:
+##### For Omnipay v2:
 
-    $ curl -s http://getcomposer.org/installer | php
-    $ php composer.phar update
+Instal the gateway using require. Require the `league/omnipay` base package and this gateway.
 
-## Basic Usage
+``` bash
+$ composer require league/omnipay:^2.0 eduardlleshi/omnipay-affirm:^2.0
+```
+
+## Usage
 
 The following gateways are provided by this package:
 
-* [Affirm](https://affirm.com/)
+ * affirm
 
-For general usage instructions, please see the main [Omnipay](https://github.com/thephpleague/omnipay)
-repository.
+For general usage instructions, please see the main [Omnipay](https://github.com/thephpleague/omnipay) repository.
 
-### Affirm.js
+#### Affirm.js
 
 The Affirm integration is fairly straight forward. Essentially you just pass
 a `checkout_token ` field through to Affirm instead of the regular payment data.
@@ -50,14 +49,10 @@ Simply pass this through to the gateway as `transaction_id`, instead of the usua
             'transaction_id' => $transaction_id,
         ])->send();
         
-        $transaction_referencee = $response->getTransactionReference();
+        $transaction_reference = $response->getTransactionReference();
         
         // you may use $transaction_reference in the upcoming calls.
 ```
-
-## TODO
-- Create unit testing for all Affirm endpoints
-- Fix an issue with refunds
 
 ## Support
 
@@ -71,3 +66,6 @@ you can subscribe to.
 
 If you believe you have found a bug, please report it using the [GitHub issue tracker](https://github.com/eduardlleshi/omnipay-affirm/issues),
 or better yet, fork the library and submit a pull request.
+
+#### TODO
+- [ ] Add unit testing.

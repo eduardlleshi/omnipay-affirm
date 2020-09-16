@@ -6,14 +6,19 @@
 
 namespace Omnipay\Affirm\Message;
 
+use Omnipay\Common\Message\AbstractRequest as BaseAbstractRequest;
+
 /**
  * Affirm Abstract Request
  *
  * This class forms the base class for all request sent to Affirm endpoints
  *
- * @link https://docs.affirm.com/Integrate_Affirm/Direct_API
+ * If running on Sandbox mode there will be an additional debuggign array in every API response.
+ *
+ * @see https://docs.affirm.com/affirm-developers/reference#introduction (Direct API)
+ * @see https://docs.affirm.com/affirm-developers/reference#transactions-api
  */
-abstract class AbstractRequest extends \Omnipay\Common\Message\AbstractRequest
+abstract class AbstractRequest extends BaseAbstractRequest
 {
 	/**
 	 * API V1 (Transaction API)
@@ -78,7 +83,7 @@ abstract class AbstractRequest extends \Omnipay\Common\Message\AbstractRequest
 	 *
 	 * @param $value
 	 *
-	 * @return \Omnipay\Common\Message\AbstractRequest
+	 * @return BaseAbstractRequest
 	 */
 	public function setCheckoutToken( $value )
 	{
@@ -100,7 +105,7 @@ abstract class AbstractRequest extends \Omnipay\Common\Message\AbstractRequest
 	 *
 	 * @param $value
 	 *
-	 * @return \Omnipay\Common\Message\AbstractRequest
+	 * @return BaseAbstractRequest
 	 */
 	public function setTransactionId( $value )
 	{
@@ -122,7 +127,7 @@ abstract class AbstractRequest extends \Omnipay\Common\Message\AbstractRequest
 	 *
 	 * @param $value
 	 *
-	 * @return \Omnipay\Common\Message\AbstractRequest
+	 * @return BaseAbstractRequest
 	 */
 	public function setExpand( $value )
 	{
@@ -144,7 +149,7 @@ abstract class AbstractRequest extends \Omnipay\Common\Message\AbstractRequest
 	 *
 	 * @param $value
 	 *
-	 * @return \Omnipay\Common\Message\AbstractRequest
+	 * @return BaseAbstractRequest
 	 */
 	public function setOrderId( $value )
 	{
@@ -166,7 +171,7 @@ abstract class AbstractRequest extends \Omnipay\Common\Message\AbstractRequest
 	 *
 	 * @param $value
 	 *
-	 * @return \Omnipay\Common\Message\AbstractRequest
+	 * @return BaseAbstractRequest
 	 */
 	public function setPublicKey( $value )
 	{
@@ -188,7 +193,7 @@ abstract class AbstractRequest extends \Omnipay\Common\Message\AbstractRequest
 	 *
 	 * @param $value
 	 *
-	 * @return \Omnipay\Common\Message\AbstractRequest
+	 * @return BaseAbstractRequest
 	 */
 	public function setPrivateKey( $value )
 	{
@@ -210,13 +215,12 @@ abstract class AbstractRequest extends \Omnipay\Common\Message\AbstractRequest
 	 *
 	 * @param $value
 	 *
-	 * @return \Omnipay\Common\Message\AbstractRequest
+	 * @return BaseAbstractRequest
 	 */
 	public function setProductKey( $value )
 	{
 		return $this->setParameter( 'productKey', $value );
 	}
-
 
 	/**
 	 * Get HTTP Method.
@@ -239,43 +243,49 @@ abstract class AbstractRequest extends \Omnipay\Common\Message\AbstractRequest
 	 */
 	public function sendData( $data )
 	{
-		// don't throw exceptions for 4xx errors
-		$this->httpClient->getEventDispatcher()->addListener(
-			'request.error',
-			function ( $event ) {
-				if ( $event['response']->isClientError() ) {
-					$event->stopPropagation();
-				}
-			}
-		);
-
 		// if there are no data to be sent, send null value
-		if ( !empty( $data ) && count( $data ) )
-			$json_data = json_encode( $data );
-		else
-			$json_data = NULL;
+		$json_body = NULL;
+		if ( !empty( $data ) && count( $data ) ) {
+			$json_body = json_encode( $data );
+		}
 
-		$httpRequest = $this->httpClient->createRequest( $this->getHttpMethod(), $this->getEndpoint(), NULL, $json_data );
-		$httpRequest->getCurlOptions()->set( CURLOPT_SSLVERSION, 6 );
-		$httpRequest->getCurlOptions()->set( CURLOPT_USERPWD, $this->getPublicKey() . ':' . $this->getPrivateKey() );
-		$httpRequest->getCurlOptions()->set( CURLOPT_POSTFIELDS, $json_data );
+		$headers = [
+			'Authorization'  => 'Basic ' . base64_encode( $this->getPublicKey() . ':' . $this->getPrivateKey() ),
+			'Accept'         => 'application/json',
+			'Content-Type'   => 'application/json',
+			'Content-Length' => strlen( $json_body )
+		];
 
-		$httpResponse        = $httpRequest->setHeader( 'Content-Type', 'application/json' )->setHeader( 'Content-Length', strlen( $json_data ) )->send();
-		$jsonToArrayResponse = !empty( $httpResponse->getBody( true ) ) ? $httpResponse->json() : [];
+		$response = $this->httpClient->request( $this->getHttpMethod(), $this->getEndpoint(), $headers, $json_body );
 
-		return $this->createResponse( $jsonToArrayResponse, $httpResponse->getStatusCode() );
+		$data = json_decode( $response->getBody(), true );
+
+		if ( $this->getTestMode() ) {
+			$debug_log = [
+				'sandbox_logs' => [
+					'headers'  => $headers,
+					'method'   => $this->getHttpMethod(),
+					'endpoint' => $this->getEndpoint(),
+					'body'     => $json_body,
+					'response' => $data
+				]
+			];
+
+			$data = array_merge( $data, $debug_log );
+		}
+
+		return $this->createResponse( $data );
 	}
 
 	/**
 	 * Generate the Response class with the returning data from sendData
 	 *
 	 * @param $data
-	 * @param $httpStatusCode
 	 *
 	 * @return AuthorizeResponse
 	 */
-	protected function createResponse( $data, $httpStatusCode )
+	protected function createResponse( $data )
 	{
-		return $this->response = new AuthorizeResponse( $this, $data, $httpStatusCode );
+		return $this->response = new AuthorizeResponse( $this, $data );
 	}
 }

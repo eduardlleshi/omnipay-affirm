@@ -6,6 +6,8 @@
 
 namespace Omnipay\Affirm\Message;
 
+use Omnipay\Common\Exception\InvalidRequestException;
+
 /**
  * Affirm Capture Request
  *
@@ -89,6 +91,7 @@ class CaptureRequest extends AbstractRequest
 	 * Prepare the data that the endpoint requests
 	 *
 	 * @return array
+	 * @throws InvalidRequestException
 	 */
 	public function getData()
 	{
@@ -125,12 +128,11 @@ class CaptureRequest extends AbstractRequest
 	 * Create the response object with the returned data.
 	 *
 	 * @param $data
-	 * @param $statusCode
 	 *
 	 * @return CaptureResponse
 	 */
-	protected function createResponse( $data, $statusCode )
+	protected function createResponse( $data )
 	{
-		return $this->response = new CaptureResponse( $this, $data, $statusCode );
+		return $this->response = new CaptureResponse( $this, $data );
 	}
 }

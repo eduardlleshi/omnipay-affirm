@@ -14,8 +14,16 @@ use Omnipay\Affirm\Message\UpdateRequest;
 use Omnipay\Affirm\Message\VoidRequest;
 use Omnipay\Common\AbstractGateway;
 
-//TODO: add sample code
-
+/**
+ * @method \Omnipay\Common\Message\NotificationInterface acceptNotification( array $options = array() )
+ * @method \Omnipay\Common\Message\RequestInterface completeAuthorize( array $options = array() )
+ * @method \Omnipay\Common\Message\RequestInterface purchase( array $options = array() )
+ * @method \Omnipay\Common\Message\RequestInterface completePurchase( array $options = array() )
+ * @method \Omnipay\Common\Message\RequestInterface fetchTransaction( array $options = [] )
+ * @method \Omnipay\Common\Message\RequestInterface createCard( array $options = array() )
+ * @method \Omnipay\Common\Message\RequestInterface updateCard( array $options = array() )
+ * @method \Omnipay\Common\Message\RequestInterface deleteCard( array $options = array() )
+ */
 class Gateway extends AbstractGateway
 {
 
@@ -58,7 +66,7 @@ class Gateway extends AbstractGateway
 	 *
 	 * @return Gateway provides a fluent interface
 	 */
-	public function setPublicKey( $value )
+	public function setPublicKey( string $value )
 	{
 		return $this->setParameter( 'publicKey', $value );
 	}
@@ -82,7 +90,7 @@ class Gateway extends AbstractGateway
 	 *
 	 * @return Gateway provides a fluent interface
 	 */
-	public function setPrivateKey( $value )
+	public function setPrivateKey( string $value ): Gateway
 	{
 		return $this->setParameter( 'privateKey', $value );
 	}
@@ -104,7 +112,7 @@ class Gateway extends AbstractGateway
 	 *
 	 * @return Gateway provides a fluent interface
 	 */
-	public function setProductKey( $value )
+	public function setProductKey( string $value )
 	{
 		return $this->setParameter( 'productKey', $value );
 	}
@@ -119,13 +127,15 @@ class Gateway extends AbstractGateway
 	 *
 	 * checkout_token is required to identify and authorize a charge
 	 *
+	 * @see https://docs.affirm.com/affirm-developers/reference#authorize-transaction
+	 *
 	 * @param array $parameters
 	 *
 	 * @return AuthorizeRequest
 	 */
 	public function authorize( array $parameters = [] )
 	{
-		return $this->createRequest( '\Omnipay\Affirm\Message\AuthorizeRequest', $parameters );
+		return $this->createRequest( AuthorizeRequest::class, $parameters );
 	}
 
 	/**
@@ -135,17 +145,21 @@ class Gateway extends AbstractGateway
 	 *
 	 * transactionReferece is required in order to capture the request
 	 *
+	 * @see https://docs.affirm.com/affirm-developers/reference#capture-transaction
+	 *
 	 * @param array $parameters
 	 *
 	 * @return CaptureRequest
 	 */
 	public function capture( array $parameters = [] )
 	{
-		return $this->createRequest( '\Omnipay\Affirm\Message\CaptureRequest', $parameters );
+		return $this->createRequest( CaptureRequest::class, $parameters );
 	}
 
 	/**
 	 * Fetch a single or list of transactions.
+	 *
+	 * @see https://docs.affirm.com/affirm-developers/reference#getting-started-with-your-api
 	 *
 	 * @param array $parameters
 	 *
@@ -153,14 +167,15 @@ class Gateway extends AbstractGateway
 	 */
 	public function fetch( array $parameters = [] )
 	{
-		return $this->createRequest( '\Omnipay\Affirm\Message\FetchRequest', $parameters );
+		return $this->createRequest( FetchRequest::class, $parameters );
 	}
 
 	/**
 	 * Void a transaction
 	 *
 	 * NOTE: transaction cannot be charged if it has been voided.
-	 * @see https://docs.affirm.com/Integrate_Affirm/Direct_API#charge_states for a list of statuses where this action can be applied.
+	 *
+	 * @see https://docs.affirm.com/affirm-developers/reference#void
 	 *
 	 * @param array $parameters
 	 *
@@ -168,13 +183,11 @@ class Gateway extends AbstractGateway
 	 */
 	public function void( array $parameters = [] )
 	{
-		return $this->createRequest( '\Omnipay\Affirm\Message\VoidRequest', $parameters );
+		return $this->createRequest( VoidRequest::class, $parameters );
 	}
 
 	/**
 	 * Refund Request
-	 *
-	 * TODO: Currently not working as intended.
 	 *
 	 * You may do a partial or full refund. To do a partial refund you can include the amount field.
 	 *
@@ -184,7 +197,7 @@ class Gateway extends AbstractGateway
 	 * The amount you refund is based upon the original purchase price, just as if it was a normal credit card transaction.
 	 * Interest and fees corresponding to the refunded amount are all automatically calculated on Affirm's end.
 	 *
-	 * @see https://docs.affirm.com/Integrate_Affirm/Direct_API#charge_states for a list of statuses where this action can be applied.
+	 * @see https://docs.affirm.com/affirm-developers/reference#charges-refund
 	 *
 	 * @param array $parameters
 	 *
@@ -192,7 +205,7 @@ class Gateway extends AbstractGateway
 	 */
 	public function refund( array $parameters = [] )
 	{
-		return $this->createRequest( '\Omnipay\Affirm\Message\RefundRequest', $parameters );
+		return $this->createRequest( RefundRequest::class, $parameters );
 	}
 
 	/**
@@ -200,12 +213,26 @@ class Gateway extends AbstractGateway
 	 *
 	 * Updates customer shipping (address, tracking info, carrier) and internal order_id. All params are optional
 	 *
+	 * @see https://docs.affirm.com/affirm-developers/reference#update
+	 *
 	 * @param array $parameters
 	 *
 	 * @return UpdateRequest
 	 */
 	public function update( array $parameters = [] )
 	{
-		return $this->createRequest( '\Omnipay\Affirm\Message\UpdateRequest', $parameters );
+		return $this->createRequest( UpdateRequest::class, $parameters );
+	}
+
+	public function __call( $name, $arguments )
+	{
+		// TODO: Implement @method \Omnipay\Common\Message\NotificationInterface acceptNotification(array $options = array())
+		// TODO: Implement @method \Omnipay\Common\Message\RequestInterface completeAuthorize(array $options = array())
+		// TODO: Implement @method \Omnipay\Common\Message\RequestInterface purchase(array $options = array())
+		// TODO: Implement @method \Omnipay\Common\Message\RequestInterface completePurchase(array $options = array())
+		// TODO: Implement @method \Omnipay\Common\Message\RequestInterface fetchTransaction(array $options = [])
+		// TODO: Implement @method \Omnipay\Common\Message\RequestInterface createCard(array $options = array())
+		// TODO: Implement @method \Omnipay\Common\Message\RequestInterface updateCard(array $options = array())
+		// TODO: Implement @method \Omnipay\Common\Message\RequestInterface deleteCard(array $options = array())
 	}
 }

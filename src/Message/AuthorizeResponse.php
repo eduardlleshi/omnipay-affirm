@@ -21,7 +21,7 @@ class AuthorizeResponse extends AbstractResponse
 	 */
 	public function isSuccessful()
 	{
-		return empty( $this->data['message'] ) && $this->getCode() == 200 && $this->data['type'] != 'invalid_request' || ( isset( $this->data['status'] ) && $this->data['status'] == 'authorized' );
+		return ( empty( $this->data['message'] ) && $this->getCode() == 200 && $this->data['type'] != 'invalid_request' ) || ( isset( $this->data['status'] ) && $this->data['status'] == 'authorized' );
 	}
 
 	/**

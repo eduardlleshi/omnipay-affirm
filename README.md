@@ -36,8 +36,8 @@ For general usage instructions, please see the main [Omnipay](https://github.com
 The Affirm integration is fairly straight forward. Essentially you just pass
 a `checkout_token ` field through to Affirm instead of the regular payment data.
 
-Start by following the standard Affirm JS guide here to generate the :
-[https://docs.affirm.com/Integrate_Affirm/Direct_API#Initiate_checkout](https://docs.affirm.com/Integrate_Affirm/Direct_API#Initiate_checkout)
+Start by following the guide here:
+[Affirm Direct API](https://docs.affirm.com/payments/docs/direct-api-overview)
 
 After that you will have a `checkout_token` field which will be submitted to your server.
 Simply pass this through to the gateway as `transaction_id`, instead of the usual `options` array:
